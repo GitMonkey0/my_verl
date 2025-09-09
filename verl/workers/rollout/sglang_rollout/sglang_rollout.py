@@ -902,13 +902,12 @@ class SGLangRollout(BaseRollout):
                         finish_reason_type = FinishReasonTypeEnum.TOOL_CALL
                         _req.state = AsyncRolloutRequestStateEnum.TOOL_CALLING
                         try:
+                            breakpoint()
                             normed_content, tool_calls = self._function_call_parser.parse_non_stream(content)
-                        except JSONDecodeError:
-                            normed_content = content
+                        except:
+                            normed_content = f'''{content}\nIt seems that my tool call format is incorrect. Let me try again.'''
                             tool_calls = []
-                        except AttributeError:
-                            normed_content = content
-                            tool_calls = []
+
                         parsed_tool_calls = []
                         for tool_call in tool_calls:
                             function, has_decode_error = OpenAIFunctionCallSchema.from_openai_function_parsed_schema(

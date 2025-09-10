@@ -21,22 +21,13 @@ import datasets
 
 from verl.utils.hdfs_io import copy, makedirs
 
-
-def make_prefix(dp, template_type):
-    question = dp['question']
-
-    if template_type == 'base':
-        prefix = (
-            f"Answer the question step by step. "
-            f"You may call retrieve_documents whenever you need more information. "
-            f"When ready, put the final answer between <answer> and </answer>. "
-            f"e.g. <answer>Beijing</answer>. "
-            f"Question: {question}\n"
-        )
-    else:
-        raise NotImplementedError
-    return prefix
-
+prefix = (
+    "You are an agent that solves complex questions by interleaving reasoning and external retrieval. "
+    "First, briefly outline your high-level plan. "
+    "Whenever you need more information, you MUST perform exactly one tool call to search relevant documents. "
+    "After receiving the response, you may start a new turn with exactly one tool call or directly and concisely answer as <answer>...</answer>. "
+    "Example: <answer>Beijing</answer>\n"
+)
 
 def build_split(data_source: str, split: str, template_type: str, sample_train_size: int = None):
     """Load one split and map it to the common format."""
@@ -48,10 +39,10 @@ def build_split(data_source: str, split: str, template_type: str, sample_train_s
 
     def process_fn(example, idx):
         example['question'] = example['question'].strip()
-        prefix = make_prefix(example, template_type=template_type)
+        # prefix = make_prefix(example, template_type=template_type)
         data = {
             "data_source": f"searchR1_{data_source}",
-            "prompt": [{"role": "user", "content": prefix}],
+            "prompt": [{"role": "system", "content": prefix}, {"role": "user", "content": example['question'].strip()}],
             "ability": "fact-reasoning",
             "reward_model": {
                 "style": "rule",

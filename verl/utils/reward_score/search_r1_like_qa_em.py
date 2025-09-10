@@ -168,12 +168,12 @@ def compute_score(solution_str: str, ground_truth: Dict) -> Dict[str, float]:
         # First, try EM
         if em_check(predicted_answer, golden_answers):
             content_reward = CONTENT_REWARD
-        else:
-            # EM failed → try LLM-as-Judge
-            if llm_judge(predicted_answer, golden_answers):
-                judge_reward = JUDGE_REWARD
-                if do_print:
-                    print(f"[LLM Judge] Accepted: {predicted_answer}")
+        # else:
+        #     # EM failed → try LLM-as-Judge
+        #     if llm_judge(predicted_answer, golden_answers):
+        #         judge_reward = JUDGE_REWARD
+        #         if do_print:
+        #             print(f"[LLM Judge] Accepted: {predicted_answer}")
 
     total_score = format_reward + content_reward + judge_reward
     em_acc = 1.0 if (content_reward > 0 or judge_reward > 0) else 0.0

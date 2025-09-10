@@ -79,7 +79,7 @@ if __name__ == "__main__":
     parser.add_argument("--template_type", type=str, default="base")
     parser.add_argument("--train_data_sources", default="hotpotqa",
                         help="Comma separated list of data sources for training")
-    parser.add_argument("--test_data_sources", default="nq,hotpotqa",
+    parser.add_argument("--test_data_sources", default="hotpotqa",
                         help="Comma separated list of data sources for testing")
     parser.add_argument("--sample_train_size", type=int, default=51200,
                         help="Number of training samples to subsample (None for full set)")

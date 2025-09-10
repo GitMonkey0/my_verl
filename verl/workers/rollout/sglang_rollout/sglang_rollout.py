@@ -863,7 +863,15 @@ class SGLangRollout(BaseRollout):
                         break
                     _req.state = AsyncRolloutRequestStateEnum.RUNNING
                 else:
-                    raise ValueError(f"Unexpected tool calling last message state: {_req.messages[-1]}")
+                    _req.add_user_message(
+                        self.processing_class,
+                        "Your tool call format is incorrect. Please try again.",
+                    )
+                    if len(_req.input_ids) >= self.config.max_model_len:
+                        finish_reason_type = FinishReasonTypeEnum.STOP
+                        break
+                    _req.state = AsyncRolloutRequestStateEnum.RUNNING
+                    # raise ValueError(f"Unexpected tool calling last message state: {_req.messages[-1]}")
             elif _req.state == AsyncRolloutRequestStateEnum.RUNNING:
                 # Only continue the conversation if the prompt length is not greater than max_model_len - 1,
                 # since SGLang raises an error when max_new_tokens + 1 is greater to max_model_len (the extra
@@ -902,10 +910,9 @@ class SGLangRollout(BaseRollout):
                         finish_reason_type = FinishReasonTypeEnum.TOOL_CALL
                         _req.state = AsyncRolloutRequestStateEnum.TOOL_CALLING
                         try:
-                            breakpoint()
                             normed_content, tool_calls = self._function_call_parser.parse_non_stream(content)
                         except:
-                            normed_content = f'''{content}\nIt seems that my tool call format is incorrect. Let me try again.'''
+                            normed_content = content
                             tool_calls = []
 
                         parsed_tool_calls = []
@@ -931,9 +938,9 @@ class SGLangRollout(BaseRollout):
                             )
                         else:
                             _req.add_assistant_message(self.processing_class, content)
-                            finish_reason_type = FinishReasonTypeEnum.STOP
-                            _req.state = AsyncRolloutRequestStateEnum.COMPLETED
-                            break
+                            # finish_reason_type = FinishReasonTypeEnum.STOP
+                            # _req.state = AsyncRolloutRequestStateEnum.COMPLETED
+                            # break
                     else:
                         _req.add_assistant_message(
                             self.processing_class,

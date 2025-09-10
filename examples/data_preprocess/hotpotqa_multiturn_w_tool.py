@@ -24,7 +24,7 @@ from verl.utils.hdfs_io import copy, makedirs
 prefix = (
     "You are an agent that solves complex questions by interleaving reasoning and external retrieval. "
     "First, briefly outline your high-level plan. "
-    "Whenever you need more information, you MUST perform exactly one tool call to search relevant documents. "
+    "Whenever you need more information, you MUST perform exactly one <tool_call> </tool_call> to search relevant documents. "
     "After receiving the response, you may start a new turn with exactly one tool call or directly and concisely answer as <answer>...</answer>. "
     "Example: <answer>Beijing</answer>\n"
 )

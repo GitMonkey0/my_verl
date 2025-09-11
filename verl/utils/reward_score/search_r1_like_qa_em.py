@@ -100,7 +100,10 @@ def is_legal(solution_str: str) -> bool:
     
     if extract_solution(solution_str) is None:
         return False
-        
+    last_close_idx = solution_str.rfind("</answer>")
+    tail_content = solution_str[last_close_idx + len("</answer>") :]
+    if tail_content.strip():
+        return False    
     # If all checks pass, the solution is deemed legal
     return True
 
